@@ -14,19 +14,29 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: lowlighter/metrics@latest
+      - name: Summary
+        uses: lowlighter/metrics@latest
         with:
           token: ${{ secrets.METRICS_TOKEN }}
           
-      - uses: lowlighter/metrics@latest
+      - name: Repositories and diff history
+        uses: lowlighter/metrics@latest
         with:
-          filename: metrics.plugin.lines.svg
+          filename: metrics.plugin.lines.history.svg
           token: ${{ secrets.METRICS_TOKEN }}
-          base: repositories
+          base: ""
           plugin_lines: yes
           plugin_lines_delay: 30
-          
-      - uses: lowlighter/metrics@latest
+          plugin_lines_sections: repositories, history
+          plugin_lines_repositories_limit: 2
+          plugin_lines_history_limit: 1
+          repositories_skipped: |
+            @use.patterns
+            */*
+            +lowlighter/metrics
+            
+      - name: Pinned repositories
+        uses: lowlighter/metrics@latest
         with:
           filename: metrics.plugin.repositories.pinned.svg
           token: ${{ secrets.METRICS_TOKEN }}
@@ -34,22 +44,17 @@ jobs:
           plugin_repositories: yes
           plugin_repositories_pinned: 0
 
-      - uses: lowlighter/metrics@latest
+      - name: Detailed display
+        uses: lowlighter/metrics@latest
         with:
           filename: metrics.plugin.achievements.svg
           token: ${{ secrets.METRICS_TOKEN }}
           base: ""
           plugin_achievements: yes
           plugin_achievements_only: sponsor, maintainer, octonaut
-
-      - uses: lowlighter/metrics@latest
-        with:
-          filename: metrics.plugin.notable.svg
-          token: ${{ secrets.METRICS_TOKEN }}
-          base: ""
-          plugin_notable: yes
-
-      - uses: lowlighter/metrics@latest
+          
+      - name: Recent activity
+        uses: lowlighter/metrics@latest
         with:
           filename: metrics.plugin.activity.svg
           token: ${{ secrets.METRICS_TOKEN }}
